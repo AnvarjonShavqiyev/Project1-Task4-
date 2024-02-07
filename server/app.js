@@ -1,4 +1,4 @@
 const express = require("express");
 const app = express();
-
-app.use();
+const morgan = require("morgan");
+module.exports = app;
