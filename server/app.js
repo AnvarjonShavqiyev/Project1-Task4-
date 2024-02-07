@@ -2,6 +2,14 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+
+mongoose.connect(
+  "mongodb+srv://anvarjonshavqiyev68:" +
+    process.env.MONGO_PASSWORD +
+    "@cluster1.hc6wtxf.mongodb.net/?retryWrites=true&w=majority",
+  { useMongoClient: true }
+);
 
 app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({ extended: false }));
