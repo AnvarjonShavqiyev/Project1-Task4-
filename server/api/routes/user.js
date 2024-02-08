@@ -55,6 +55,8 @@ router.post("/login", (req, res, next) => {
             error: err,
           });
         }
+        user.lstLogTime = getTime();
+        user.save();
         const token = jwt.sign(
           {
             email: user.email,
@@ -82,7 +84,6 @@ router.post("/login", (req, res, next) => {
 router.post("/signup", async (req, res, next) => {
   try {
     const existingUser = await User.findOne({ email: req.body.email }).exec();
-    console.log(req.body);
     if (existingUser) {
       return res.status(422).json({
         message: "Mail exists!",
@@ -114,7 +115,9 @@ router.post("/signup", async (req, res, next) => {
 router.patch("/:userId", async (req, res, next) => {
   try {
     const id = req.params.userId;
-    const updates = req.body;
+    const updates = {
+      status: req.body.status,
+    };
     const options = { new: true };
     const result = await User.findByIdAndUpdate(id, updates, options);
     res.status(200).json(result);
