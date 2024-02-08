@@ -7,13 +7,14 @@ const mongoose = require("mongoose");
 mongoose.connect(
   "mongodb+srv://anvarjonshavqiyev68:" +
     process.env.MONGO_PASSWORD +
-    "@cluster1.hc6wtxf.mongodb.net/?retryWrites=true&w=majority",
-  { useMongoClient: true }
+    "@cluster1.hc6wtxf.mongodb.net/?retryWrites=true&w=majority"
 );
 
 app.use(morgan("dev"));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+const userRoutes = require("./api/routes/user");
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -25,8 +26,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use("/user", userRoutes);
+
 app.use((req, res, next) => {
-  const error = new Error("Not found this route");
+  const error = new Error("This route is not found");
   error.status = 404;
   next(error);
 });

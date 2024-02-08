@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema({
   password: { type: String, required: true },
   lstLogTime: { type: String },
   regTime: { type: String },
-  status: { type: String },
+  status: { type: Boolean },
 });
 
 module.exports = mongoose.model("User", userSchema);
