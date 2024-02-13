@@ -5,9 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 mongoose.connect(
-  "mongodb+srv://anvarjonshavqiyev68:" +
-    process.env.MONGO_PASSWORD +
-    "@cluster1.hc6wtxf.mongodb.net/?retryWrites=true&w=majority"
+  "mongodb+srv://anvarjonshavqiyev68:QTYfAmo4XWg7MbWv@cluster1.hc6wtxf.mongodb.net/?retryWrites=true&w=majority"
 );
 
 app.use(morgan("dev"));
