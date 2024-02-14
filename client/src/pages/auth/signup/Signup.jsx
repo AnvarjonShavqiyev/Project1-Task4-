@@ -5,16 +5,39 @@ import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import axios from "../../../api/axios";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function SignUp() {
+  const navigate = useNavigate();
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
+
+    const userData = {};
+    data.forEach((value, key) => {
+      userData[key] = value;
+    });
+
+    axios.post("/user/signup", userData)
+    .then((response) => {
+      if (response.status === 201) {
+        toast.success("Successfully registered :)");
+        setTimeout(() => {
+          navigate("/signIn");
+        }, 2500);
+      }
+    })
+    .catch((error) => {
+      if (error.response && error.response.status === 422) {
+        toast.error("Email is exist!");
+      } else {
+        console.error("Unexpected error:", error);
+      }
     });
   };
 
@@ -33,9 +56,9 @@ export default function SignUp() {
             margin="normal"
             required
             fullWidth
-            id="Username"
+            id="name"
             label="Username"
-            name="username"
+            name="name"
             autoComplete="username"
           />
           <TextField
@@ -71,13 +94,14 @@ export default function SignUp() {
           </Button>
           <Grid container>
             <Grid item>
-              <Link href='/signIn' variant="body2">
+              <Link href="/signIn" variant="body2">
                 {"Have you account? Sign In"}
               </Link>
             </Grid>
           </Grid>
         </Box>
       </Box>
+      <ToastContainer />
     </Container>
   );
 }
