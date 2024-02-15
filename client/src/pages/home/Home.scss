@@ -1,0 +1,19 @@
+.actions-wrapper {
+  padding: 40px 0px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.lock-icon {
+  font-size: 22px;
+}
+.unlock-icon {
+  font-size: 22px;
+  color: #000;
+}
+.custom-hover {
+  padding: 7.5px 10px !important;
+}
+.custom-hover:hover {
+  background-color: #5a9bdc75 !important;
+}

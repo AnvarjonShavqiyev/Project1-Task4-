@@ -7,15 +7,41 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import { useNavigate } from "react-router-dom";
+import axios from "../../../api/axios";
+import { ToastContainer, toast } from "react-toastify";
 
 export default function SignIn() {
+  const navigate = useNavigate();
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
+
+    const userData = {};
+    data.forEach((value, key) => {
+      userData[key] = value;
     });
+
+    axios
+      .post("/user/login", userData)
+      .then((response) => {
+        if (response.status === 200) {
+          toast.success("Welcome :)");
+          localStorage.setItem("Token", response.data.token);
+          localStorage.setItem("username", response.data.username);
+          console.log(response);
+          setTimeout(() => {
+            navigate("/dashboard");
+          }, 2500);
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 401) {
+          toast.error("Something went wrong!");
+        } else {
+          console.error("Unexpected error:", error);
+        }
+      });
   };
 
   return (
@@ -68,6 +94,7 @@ export default function SignIn() {
             </Grid>
           </Grid>
         </Box>
+        <ToastContainer />
       </Box>
     </Container>
   );

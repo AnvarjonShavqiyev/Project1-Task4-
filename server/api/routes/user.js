@@ -62,14 +62,14 @@ router.post("/login", (req, res, next) => {
             email: user.email,
             userId: user._id,
           },
-          process.env.JWT_KEY,
+          "secretKey",
           {
             expiresIn: "2h",
           }
         );
         res.status(200).json({
           message: "Auth successful",
-          userId: user._id,
+          username: user.name,
           token: token,
         });
       });
@@ -112,33 +112,41 @@ router.post("/signup", async (req, res, next) => {
   }
 });
 
-router.patch("/:userId", async (req, res, next) => {
+router.patch("/update", async (req, res, next) => {
   try {
-    const id = req.params.userId;
-    const updates = {
-      status: req.body.status,
-    };
-    const options = { new: true };
-    const result = await User.findByIdAndUpdate(id, updates, options);
+    const userIds = req.body.userIds;
+    const status = req.body.status;
+    console.log(userIds, status);
+    if (!userIds || !status) {
+      return res
+        .status(400)
+        .json({ error: "userIds and status are required in the request body" });
+    }
+    const filter = { _id: { $in: userIds } };
+    const update = { $set: { status: status } };
+    const result = await User.updateMany(filter, update);
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({
-      error: error,
+      error: error.message,
     });
   }
 });
 
-router.delete("/:userId", async (req, res, next) => {
+router.delete("/delete", async (req, res, next) => {
   try {
-    const result = await User.findByIdAndDelete({
-      _id: req.params.userId,
-    }).exec();
-    res.status(200).json({
-      message: "User deleted",
-    });
-  } catch (err) {
+    const userIds = req.body.userIds;
+    if (!userIds) {
+      return res
+        .status(400)
+        .json({ error: "userIds are required in the request body" });
+    }
+    const filter = { _id: { $in: userIds } };
+    const result = await User.deleteMany(filter);
+    res.status(200).json(result);
+  } catch (error) {
     res.status(500).json({
-      error: err,
+      error: error.message,
     });
   }
 });

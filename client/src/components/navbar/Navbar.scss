@@ -1,0 +1,17 @@
+.navbar {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 20px 10px;
+  font-size: 20px;
+}
+.navbar-wrapper {
+  background-color: #d4d1d1;
+}
+.log-out-btn {
+  background-color: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  text-decoration: underline;
+}
