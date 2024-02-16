@@ -98,6 +98,7 @@ const Home = () => {
               prevRows.filter((row) => !userIds.includes(row.id))
             );
             setSelectedUserIds([]);
+            setIsAllChecked(false);
             toast.success("Users deleted!");
           }
         });
@@ -118,7 +119,8 @@ const Home = () => {
                 status: userIds.includes(row.id) ? "Blocked" : row.status,
               }))
             );
-            setSelectedUserIds([])
+            setSelectedUserIds([]);
+            setIsAllChecked(false);
             toast.success("Users blocked!");
           }
         });
@@ -138,7 +140,8 @@ const Home = () => {
                 status: userIds.includes(row.id) ? "Active" : row.status,
               }))
             );
-            setSelectedUserIds([])
+            setSelectedUserIds([]);
+            setIsAllChecked(false);
             toast.success("Users unlocked!");
           }
         });
@@ -147,7 +150,6 @@ const Home = () => {
     }
   };
 
- 
   return (
     <>
       <Navbar />
