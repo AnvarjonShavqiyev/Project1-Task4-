@@ -116,7 +116,6 @@ router.patch("/update", async (req, res, next) => {
   try {
     const userIds = req.body.userIds;
     const status = req.body.status;
-    console.log(userIds, status);
     if (!userIds || !status) {
       return res
         .status(400)
@@ -136,7 +135,7 @@ router.patch("/update", async (req, res, next) => {
 router.delete("/delete", async (req, res, next) => {
   try {
     const userIds = req.body.userIds;
-    console.log(req.body)
+    console.log(req.body);
     if (!userIds) {
       return res
         .status(400)

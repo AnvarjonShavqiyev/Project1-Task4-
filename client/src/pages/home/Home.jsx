@@ -46,22 +46,21 @@ const Home = () => {
   useEffect(() => {
     axios.get("/user").then((response) => setUsersData(response.data));
   }, []);
+  function getTime(dayTime) {
+    let day = dayTime.split(" ")[0];
+    let time = dayTime.split(" ")[1];
 
+    day = day.split("-");
+    day = day.map((d) => (d.length < 2 ? "0" + d : d));
+    day = day.join("-");
+
+    time = time.split(":");
+    time = time.map((t) => (t.length < 2 ? "0" + t : t));
+    time = time.join(":");
+
+    return day + " " + time;
+  }
   useEffect(() => {
-    function getTime(dayTime){
-      let day = dayTime.split(' ')[0]
-      let time = dayTime.split(' ')[1]
-
-      day = day.split("-");
-      day = day.map(d => d < 10 ? '0'+d : d)
-      day = day.join('-');
-      
-      time = time.split(":");
-      time = time.map(t => t < 10 ? '0'+t : t)
-      time = time.join(':');
-
-      return day + ' ' + time
-    }
     usersData &&
       setRows(
         usersData.map((user) => ({
@@ -74,7 +73,6 @@ const Home = () => {
         }))
       );
   }, [usersData]);
-
   const handleCheckboxChange = (userId) => {
     const updatedSelectedUserIds = userIds.includes(userId)
       ? userIds.filter((id) => id !== userId)
@@ -99,7 +97,7 @@ const Home = () => {
             setRows((prevRows) =>
               prevRows.filter((row) => !userIds.includes(row.id))
             );
-            setSelectedUserIds([])
+            setSelectedUserIds([]);
             toast.success("Users deleted!");
           }
         });
@@ -108,7 +106,48 @@ const Home = () => {
     }
   };
 
-  
+  const handleBlockUsers = () => {
+    if (window.confirm("Are you sure that?")) {
+      instance
+        .patch("/user/update", { userIds: userIds, status: "false" })
+        .then((response) => {
+          if (response.status === 200) {
+            setRows((prevRows) =>
+              prevRows.map((row) => ({
+                ...row,
+                status: userIds.includes(row.id) ? "Blocked" : row.status,
+              }))
+            );
+            setSelectedUserIds([])
+            toast.success("Users blocked!");
+          }
+        });
+    } else {
+      toast.info("Operation canceled!");
+    }
+  };
+  const handleUnlockUsers = () => {
+    if (window.confirm("Are you sure that?")) {
+      instance
+        .patch("/user/update", { userIds: userIds, status: "true" })
+        .then((response) => {
+          if (response.status === 200) {
+            setRows((prevRows) =>
+              prevRows.map((row) => ({
+                ...row,
+                status: userIds.includes(row.id) ? "Active" : row.status,
+              }))
+            );
+            setSelectedUserIds([])
+            toast.success("Users unlocked!");
+          }
+        });
+    } else {
+      toast.info("Operation canceled!");
+    }
+  };
+
+ 
   return (
     <>
       <Navbar />
@@ -118,11 +157,15 @@ const Home = () => {
             sx={{ display: "flex", alignItems: "center", gap: "5px" }}
             color="error"
             variant="contained"
+            onClick={() => handleBlockUsers()}
           >
             <CiLock className="lock-icon" /> Block
           </Button>
           <Tooltip title="Unblock" placement="top">
-            <Button className="custom-hover">
+            <Button
+              onClick={() => handleUnlockUsers()}
+              className="custom-hover"
+            >
               <CiUnlock className="unlock-icon" />
             </Button>
           </Tooltip>
