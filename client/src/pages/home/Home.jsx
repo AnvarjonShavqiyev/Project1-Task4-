@@ -15,6 +15,8 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import "./Home.scss";
+import { ToastContainer, toast } from "react-toastify";
+import instance from "../../api/axios";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -38,7 +40,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const Home = () => {
   const [usersData, setUsersData] = useState();
   const [rows, setRows] = useState([]);
-  const [selectedUserIds, setSelectedUserIds] = useState([]);
+  const [userIds, setSelectedUserIds] = useState([]);
   const [isAllChecked, setIsAllChecked] = useState(false);
 
   useEffect(() => {
@@ -46,23 +48,37 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
+    function getTime(dayTime){
+      let day = dayTime.split(' ')[0]
+      let time = dayTime.split(' ')[1]
+
+      day = day.split("-");
+      day = day.map(d => d < 10 ? '0'+d : d)
+      day = day.join('-');
+      
+      time = time.split(":");
+      time = time.map(t => t < 10 ? '0'+t : t)
+      time = time.join(':');
+
+      return day + ' ' + time
+    }
     usersData &&
       setRows(
         usersData.map((user) => ({
           id: user._id,
           name: user.name,
           email: user.email,
-          lstLogTime: user.lstLogTime,
-          regTime: user.regTime,
+          lstLogTime: getTime(user.lstLogTime),
+          regTime: getTime(user.regTime),
           status: user.status ? "Active" : "Blocked",
         }))
       );
   }, [usersData]);
 
   const handleCheckboxChange = (userId) => {
-    const updatedSelectedUserIds = selectedUserIds.includes(userId)
-      ? selectedUserIds.filter((id) => id !== userId)
-      : [...selectedUserIds, userId];
+    const updatedSelectedUserIds = userIds.includes(userId)
+      ? userIds.filter((id) => id !== userId)
+      : [...userIds, userId];
 
     setSelectedUserIds(updatedSelectedUserIds);
     setIsAllChecked(updatedSelectedUserIds.length === rows.length);
@@ -74,6 +90,25 @@ const Home = () => {
     setSelectedUserIds(allChecked ? rows.map((row) => row.id) : []);
   };
 
+  const handleDeleteUsers = () => {
+    if (window.confirm("Are you sure that?")) {
+      instance
+        .delete("/user/delete", { data: { userIds: userIds } })
+        .then((response) => {
+          if (response.status === 200) {
+            setRows((prevRows) =>
+              prevRows.filter((row) => !userIds.includes(row.id))
+            );
+            setSelectedUserIds([])
+            toast.success("Users deleted!");
+          }
+        });
+    } else {
+      toast.info("Operation canceled!");
+    }
+  };
+
+  
   return (
     <>
       <Navbar />
@@ -92,7 +127,10 @@ const Home = () => {
             </Button>
           </Tooltip>
           <Tooltip title="Delete" placement="top">
-            <Button className="custom-hover">
+            <Button
+              onClick={() => handleDeleteUsers()}
+              className="custom-hover"
+            >
               <RiDeleteBinLine className="unlock-icon" />
             </Button>
           </Tooltip>
@@ -105,7 +143,11 @@ const Home = () => {
                 <StyledTableCell align="left">
                   <input
                     type="checkbox"
-                    className="custom-checkbox"
+                    className={
+                      !isAllChecked && userIds.length > 0
+                        ? "custom-checkbox-minus"
+                        : "custom-checkbox"
+                    }
                     onChange={handleSelectAllChange}
                     checked={isAllChecked}
                   />
@@ -114,7 +156,9 @@ const Home = () => {
                 <StyledTableCell align="left">Name</StyledTableCell>
                 <StyledTableCell align="left">Email</StyledTableCell>
                 <StyledTableCell align="left">Last Login Time</StyledTableCell>
-                <StyledTableCell align="left">Registration Time</StyledTableCell>
+                <StyledTableCell align="left">
+                  Registration Time
+                </StyledTableCell>
                 <StyledTableCell align="left">Status</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -125,14 +169,16 @@ const Home = () => {
                     <input
                       type="checkbox"
                       className="custom-checkbox"
-                      checked={selectedUserIds.includes(row.id)}
+                      checked={userIds.includes(row.id)}
                       onChange={() => handleCheckboxChange(row.id)}
                     />
                   </StyledTableCell>
                   <StyledTableCell align="left">{row.id}</StyledTableCell>
                   <StyledTableCell align="left">{row.name}</StyledTableCell>
                   <StyledTableCell align="left">{row.email}</StyledTableCell>
-                  <StyledTableCell align="left">{row.lstLogTime}</StyledTableCell>
+                  <StyledTableCell align="left">
+                    {row.lstLogTime}
+                  </StyledTableCell>
                   <StyledTableCell align="left">{row.regTime}</StyledTableCell>
                   <StyledTableCell align="left">{row.status}</StyledTableCell>
                 </StyledTableRow>
@@ -140,6 +186,7 @@ const Home = () => {
             </TableBody>
           </Table>
         </TableContainer>
+        <ToastContainer />
       </Container>
     </>
   );

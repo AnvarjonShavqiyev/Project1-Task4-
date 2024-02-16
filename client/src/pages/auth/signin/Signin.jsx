@@ -8,7 +8,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { useNavigate } from "react-router-dom";
-import axios from "../../../api/axios";
+import instance from "../../../api/axios";
 import { ToastContainer, toast } from "react-toastify";
 
 export default function SignIn() {
@@ -22,7 +22,7 @@ export default function SignIn() {
       userData[key] = value;
     });
 
-    axios
+    instance
       .post("/user/login", userData)
       .then((response) => {
         if (response.status === 200) {

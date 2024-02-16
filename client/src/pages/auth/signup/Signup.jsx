@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import instance from "../../../api/axios";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -23,22 +24,23 @@ export default function SignUp() {
       userData[key] = value;
     });
 
-    axios.post("/user/signup", userData)
-    .then((response) => {
-      if (response.status === 201) {
-        toast.success("Successfully registered :)");
-        setTimeout(() => {
-          navigate("/signIn");
-        }, 2500);
-      }
-    })
-    .catch((error) => {
-      if (error.response && error.response.status === 422) {
-        toast.error("Email is exist!");
-      } else {
-        console.error("Unexpected error:", error);
-      }
-    });
+    instance
+      .post("/user/signup", userData)
+      .then((response) => {
+        if (response.status === 201) {
+          toast.success("Successfully registered :)");
+          // setTimeout(() => {
+          //   navigate("/signIn");
+          // }, 2500);
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 422) {
+          toast.error("Email is exist!");
+        } else {
+          console.error("Unexpected error:", error);
+        }
+      });
   };
 
   return (

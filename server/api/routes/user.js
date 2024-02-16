@@ -136,6 +136,7 @@ router.patch("/update", async (req, res, next) => {
 router.delete("/delete", async (req, res, next) => {
   try {
     const userIds = req.body.userIds;
+    console.log(req.body)
     if (!userIds) {
       return res
         .status(400)
