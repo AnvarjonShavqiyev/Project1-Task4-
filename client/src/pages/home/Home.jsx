@@ -107,6 +107,10 @@ const Home = () => {
     }
   };
 
+  useEffect(() => {
+    
+  },[])
+
   const handleBlockUsers = () => {
     if (window.confirm("Are you sure that?")) {
       instance
