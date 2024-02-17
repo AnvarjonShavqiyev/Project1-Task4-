@@ -43,7 +43,7 @@ const Home = () => {
   const [rows, setRows] = useState([]);
   const [userIds, setSelectedUserIds] = useState([]);
   const [isAllChecked, setIsAllChecked] = useState(false);
-  const navigate = useNavigate('');
+  const navigate = useNavigate("");
   useEffect(() => {
     axios.get("/user").then((response) => setUsersData(response.data));
   }, []);
@@ -110,7 +110,7 @@ const Home = () => {
 
   const handleBlockUsers = () => {
     if (window.confirm("Are you sure that?")) {
-      const userId = localStorage.getItem("userid")
+      const userId = localStorage.getItem("userid");
       instance
         .patch("/user/update", { userIds: userIds, status: "false" })
         .then((response) => {
@@ -121,11 +121,11 @@ const Home = () => {
                 status: userIds.includes(row.id) ? "Blocked" : row.status,
               }))
             );
-            if(userIds.includes(userId)){
-              localStorage.removeItem('Token');
-              localStorage.removeItem('username');
-              localStorage.removeItem('userid');
-              navigate('/signin')
+            if (userIds.includes(userId)) {
+              localStorage.removeItem("Token");
+              localStorage.removeItem("username");
+              localStorage.removeItem("userid");
+              navigate("/signIn");
             }
             setSelectedUserIds([]);
             setIsAllChecked(false);
