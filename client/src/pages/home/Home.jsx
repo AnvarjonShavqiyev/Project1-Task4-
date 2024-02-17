@@ -17,6 +17,7 @@ import Paper from "@mui/material/Paper";
 import "./Home.scss";
 import { ToastContainer, toast } from "react-toastify";
 import instance from "../../api/axios";
+import { useNavigate } from "react-router-dom";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -42,7 +43,7 @@ const Home = () => {
   const [rows, setRows] = useState([]);
   const [userIds, setSelectedUserIds] = useState([]);
   const [isAllChecked, setIsAllChecked] = useState(false);
-
+  const navigate = useNavigate('');
   useEffect(() => {
     axios.get("/user").then((response) => setUsersData(response.data));
   }, []);
@@ -107,12 +108,9 @@ const Home = () => {
     }
   };
 
-  useEffect(() => {
-    
-  },[])
-
   const handleBlockUsers = () => {
     if (window.confirm("Are you sure that?")) {
+      const userId = localStorage.getItem("userid")
       instance
         .patch("/user/update", { userIds: userIds, status: "false" })
         .then((response) => {
@@ -123,6 +121,12 @@ const Home = () => {
                 status: userIds.includes(row.id) ? "Blocked" : row.status,
               }))
             );
+            if(userIds.includes(userId)){
+              localStorage.removeItem('Token');
+              localStorage.removeItem('username');
+              localStorage.removeItem('userid');
+              navigate('/signin')
+            }
             setSelectedUserIds([]);
             setIsAllChecked(false);
             toast.success("Users blocked!");

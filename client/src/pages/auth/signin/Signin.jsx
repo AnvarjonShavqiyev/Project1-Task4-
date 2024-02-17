@@ -29,6 +29,7 @@ export default function SignIn() {
           toast.success("Welcome :)");
           localStorage.setItem("Token", response.data.token);
           localStorage.setItem("username", response.data.username);
+          localStorage.setItem("userid", response.data.id);
           console.log(response);
           setTimeout(() => {
             navigate("/dashboard");
