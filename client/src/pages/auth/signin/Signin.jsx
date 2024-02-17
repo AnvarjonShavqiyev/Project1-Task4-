@@ -25,7 +25,7 @@ export default function SignIn() {
     instance
       .post("/user/login", userData)
       .then((response) => {
-        if (response.status === 200) {
+        if (response.status === 200 && response.data.status) {
           toast.success("Welcome :)");
           localStorage.setItem("Token", response.data.token);
           localStorage.setItem("username", response.data.username);
@@ -33,6 +33,10 @@ export default function SignIn() {
           setTimeout(() => {
             navigate("/dashboard");
           }, 2500);
+        } else {
+          toast.error(
+            "Your account has been blocked by admins, so you can't join us :("
+          );
         }
       })
       .catch((error) => {

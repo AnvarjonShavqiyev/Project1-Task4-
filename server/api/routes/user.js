@@ -70,6 +70,7 @@ router.post("/login", (req, res, next) => {
         res.status(200).json({
           message: "Auth successful",
           username: user.name,
+          status:user.status,
           token: token,
         });
       });
@@ -104,6 +105,7 @@ router.post("/signup", async (req, res, next) => {
     res.status(201).json({
       message: "User created",
       username: req.body.name,
+      status: req.body.status
     });
   } catch (error) {
     res.status(500).json({

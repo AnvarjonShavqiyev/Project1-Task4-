@@ -27,11 +27,12 @@ export default function SignUp() {
     instance
       .post("/user/signup", userData)
       .then((response) => {
-        if (response.status === 201) {
+        console.log(response)
+        if (response.status === 201){
           toast.success("Successfully registered :)");
-          // setTimeout(() => {
-          //   navigate("/signIn");
-          // }, 2500);
+          setTimeout(() => {
+            navigate("/signIn");
+          }, 2500);
         }
       })
       .catch((error) => {
