@@ -70,8 +70,8 @@ router.post("/login", (req, res, next) => {
         res.status(200).json({
           message: "Auth successful",
           username: user.name,
-          status:user.status,
-          id:user.id,
+          status: user.status,
+          id: user.id,
           token: token,
         });
       });
@@ -85,10 +85,15 @@ router.post("/login", (req, res, next) => {
 
 router.post("/signup", async (req, res, next) => {
   try {
-    const existingUser = await User.findOne({ email: req.body.email }).exec();
-    if (existingUser) {
+    const existingUserEmail = await User.findOne({
+      email: req.body.email,
+    }).exec();
+    const existingUserName = await User.findOne({
+      email: req.body.name,
+    }).exec();
+    if (existingUserName || existingUserEmail) {
       return res.status(422).json({
-        message: "Mail exists!",
+        message: "Mail or Name exists!",
       });
     }
     const hash = await bcrypt.hash(req.body.password, 10);
@@ -106,7 +111,7 @@ router.post("/signup", async (req, res, next) => {
     res.status(201).json({
       message: "User created",
       username: req.body.name,
-      status: req.body.status
+      status: req.body.status,
     });
   } catch (error) {
     res.status(500).json({

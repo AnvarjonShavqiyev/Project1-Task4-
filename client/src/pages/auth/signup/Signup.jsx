@@ -27,8 +27,8 @@ export default function SignUp() {
     instance
       .post("/user/signup", userData)
       .then((response) => {
-        console.log(response)
-        if (response.status === 201){
+        console.log(response);
+        if (response.status === 201) {
           toast.success("Successfully registered :)");
           setTimeout(() => {
             navigate("/signIn");
@@ -37,7 +37,7 @@ export default function SignUp() {
       })
       .catch((error) => {
         if (error.response && error.response.status === 422) {
-          toast.error("Email is exist!");
+          toast.error("Email or Name is exist!");
         } else {
           console.error("Unexpected error:", error);
         }
